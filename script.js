@@ -1,3 +1,3 @@
 function chao() {
-  alert("Xin chào! Đây là website chạy trên GitHub Pages 🚀");
+  alert("Tôi là Trần Gia Kiệt vua dev 9N1 🚀");
 }
