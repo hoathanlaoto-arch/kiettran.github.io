@@ -3,9 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Kiệt Trần - Portfolio</title>
+  
+  <title>Kiệt Trần - Developer Portfolio</title>
+  <meta name="description" content="Portfolio cá nhân của Kiệt Trần, giới thiệu các dự án về lập trình, AI và ứng dụng web.">
+  <meta name="keywords" content="Kiệt Trần, portfolio, developer, javascript, AI, web developer">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
 
-  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   
   <style>
@@ -29,9 +32,10 @@
       min-height: 100vh;
       position: relative;
       overflow-x: hidden;
+      cursor: none; /* Hide the default cursor */
     }
     /* particles sits under content */
-    #particles-js { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    #particles-js { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 
     /* site content on top */
     .site-content { position: relative; z-index: 1; }
@@ -42,6 +46,31 @@
       50%{background-position:100% 50%}
       100%{background-position:0% 50%}
     }
+    
+    /* ========== Custom Cursor ========== */
+    .cursor-dot, .cursor-outline {
+      pointer-events: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .cursor-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent3);
+    }
+    .cursor-outline {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--accent3);
+      transition: width 0.3s, height 0.3s, border-color 0.3s, background-color 0.3s;
+    }
+    body:hover .cursor-dot, body:hover .cursor-outline { opacity: 1; }
 
     /* ========== Header / Navbar ========== */
     .header{
@@ -54,10 +83,11 @@
       justify-content:space-between;
       align-items:center;
       background: rgba(8,8,10,0.35);
-      backdrop-filter: blur(6px);
-      z-index: 2;
+      backdrop-filter: blur(8px);
+      z-index: 100;
       border-bottom: 1px solid rgba(255,255,255,0.02);
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: background 0.3s;
     }
     .logo{
       font-size: 1.5rem;
@@ -81,10 +111,27 @@
       font-weight: 500;
       font-size: 0.95rem;
       transition: color .25s ease, text-shadow .25s ease;
+      position: relative;
+      padding: 4px 0;
     }
     .nav a:hover { 
       color: #fff; 
       text-shadow: 0 0 8px rgba(255,255,255,0.4);
+    }
+    /* Active Nav Link Highlight */
+    .nav a.active {
+      color: #fff;
+      font-weight: 600;
+    }
+    .nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent1));
+      border-radius: 2px;
     }
     .nav .edition {
       font-weight:700;
@@ -111,125 +158,143 @@
       transition: all 0.3s linear;
       position: relative;
     }
-    .menu-toggle.active span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
-    }
-    .menu-toggle.active span:nth-child(2) {
-      opacity: 0;
-    }
-    .menu-toggle.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -5px);
-    }
+    .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .menu-toggle.active span:nth-child(2) { opacity: 0; }
+    .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
     /* ========== Hero ========== */
     .hero{
-      min-height: 80vh;
+      min-height: 90vh;
       display:flex;
       flex-direction:column;
       justify-content:center;
       align-items:center;
       text-align:center;
-      padding: 110px 6% 60px; /* top space for fixed header */
+      padding: 110px 6% 60px;
     }
     .hero h1{
-      font-size: clamp(28px, 4.2vw, 56px);
-      line-height:1.02;
-      margin-bottom: 12px;
+      font-size: clamp(32px, 4.5vw, 60px);
+      line-height:1.1;
+      margin-bottom: 16px;
       font-weight: 700;
+      max-width: 800px;
     }
     .hero .gradient {
       background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .sub { color: var(--muted); margin-bottom:20px; }
+    .sub { color: var(--muted); margin-bottom:28px; font-size: 1.1rem; }
+
+    /* Typing Effect */
+    .typing-cursor {
+      display: inline-block;
+      width: 3px;
+      height: clamp(28px, 4vw, 50px);
+      background-color: var(--accent3);
+      animation: blink 0.7s infinite;
+      vertical-align: bottom;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
 
     /* CTA button */
     .btn{
       display:inline-block;
-      padding: 12px 28px;
+      padding: 14px 32px;
       border-radius: 12px;
       text-decoration:none;
       color: white;
       background: linear-gradient(90deg,var(--accent1),#ff8a5a);
-      box-shadow: 0 8px 30px rgba(155,124,255,0.08);
-      transition: transform .18s ease, box-shadow .18s ease;
+      box-shadow: 0 8px 30px rgba(255,107,107,0.15);
+      transition: transform .2s ease, box-shadow .2s ease;
       font-weight: 600;
+      border: 1px solid transparent;
     }
-    .btn:hover{ transform: translateY(-4px); box-shadow:0 18px 50px rgba(155,124,255,0.14); }
+    .btn:hover{ transform: translateY(-5px); box-shadow:0 18px 50px rgba(255,107,107,0.25); }
 
     /* ========== Sections ========== */
     .section{
-      padding: 80px 6%;
+      padding: 90px 6%;
       text-align:center;
       max-width:1200px;
       margin: 0 auto;
+      position: relative;
     }
     .section h2{
-      font-size: 28px;
-      margin-bottom:8px;
+      font-size: clamp(28px, 3.5vw, 40px);
+      margin-bottom:12px;
       color: #dfe7ff;
     }
-    .muted { color: var(--muted); margin-bottom: 20px; }
+    .muted { color: var(--muted); margin-bottom: 30px; font-size: 1.05rem; max-width: 600px; margin-left: auto; margin-right: auto; }
 
     /* ========== Projects grid ========== */
     .project-grid{
       display:grid;
-      grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
-      gap: 22px;
-      margin-top: 26px;
+      grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap: 28px;
+      margin-top: 40px;
     }
     .project-card{
       position:relative;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      background: var(--bg-2);
       border: 1px solid rgba(255,255,255,0.04);
-      border-radius: 14px;
-      padding: 22px;
+      border-radius: 16px;
+      padding: 28px;
       text-align:left;
-      transition: transform .32s cubic-bezier(.2,.9,.2,1), box-shadow .32s;
-      opacity: 0; transform: translateY(28px);
+      transition: transform .3s cubic-bezier(.2,.9,.2,1), box-shadow .3s;
+      opacity: 0; transform: translateY(30px);
       backdrop-filter: blur(6px);
+      z-index: 1;
     }
+    /* Glow Effect */
+    .project-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 16px;
+      background: radial-gradient(400px at var(--mouse-x) var(--mouse-y), rgba(155, 124, 255, 0.15), transparent 80%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      z-index: -1;
+    }
+    .project-card:hover::before { opacity: 1; }
+    
     .project-card.show{ opacity:1; transform: translateY(0); }
     .project-card:hover{
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 18px 50px rgba(0,0,0,0.6), 0 8px 25px rgba(155,124,255,0.10);
+      transform: translateY(-8px);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.6);
       border-color: rgba(155,124,255,0.22);
     }
-    .proj-icon{ font-size: 34px; margin-bottom: 12px; display:inline-block; }
-    .proj-desc{ color: var(--muted); margin-top: 8px; font-size: 0.95rem; }
+    .proj-icon{ font-size: 38px; margin-bottom: 14px; display:inline-block; }
+    .proj-desc{ color: var(--muted); margin-top: 8px; font-size: 0.95rem; line-height: 1.6; }
 
     /* ========== Contact box ========== */
     .link-box{
       display:inline-block;
-      padding: 12px 18px;
+      padding: 14px 24px;
       border-radius: 10px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      background: var(--bg-2);
       border: 1px solid rgba(255,255,255,0.04);
       cursor:pointer;
-      transition: transform .18s, box-shadow .18s, border-color .18s;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
     }
-    .link-box a {
-        color: #fff;
-        text-decoration: none;
-        font-weight: 500;
-    }
+    .link-box a { color: #fff; text-decoration: none; font-weight: 500; }
     .link-box:hover{
       transform: translateY(-4px);
       box-shadow: 0 12px 30px rgba(0,0,0,0.5);
-      border-color: rgba(0,210,255,0.18);
+      border-color: rgba(0,210,255,0.22);
     }
 
     /* ========== Footer ========== */
     footer{
-      padding: 28px 6%;
+      padding: 32px 6%;
       text-align:center;
       color: #9aa3b2;
       background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
-      margin-top: 40px;
+      margin-top: 50px;
     }
 
-    /* Responsive small devices */
+    /* Responsive */
     @media (max-width:720px){
       .nav {
         display: none;
@@ -257,160 +322,194 @@
       .menu-toggle{ display: flex; }
       .header{ padding: 14px 5%; }
       .hero{ padding-top: 90px; }
+      .cursor-dot, .cursor-outline { display: none; }
+      body { cursor: auto; }
     }
   </style>
 </head>
 <body>
-  <!-- Particles background -->
+  
+  <div class="cursor-dot"></div>
+  <div class="cursor-outline"></div>
+
   <div id="particles-js" aria-hidden="true"></div>
 
-  <!-- Main content (above particles) -->
   <div class="site-content">
-    <!-- Navbar -->
     <header class="header">
       <div class="logo">Kiệt <span>Trần</span></div>
       <div class="menu-toggle">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
       </div>
       <nav class="nav">
         <a href="#features">Features</a>
         <a href="#projects">Projects</a>
         <a href="#download">Download</a>
+        <a href="#contact">Contact</a>
         <a href="#edition" class="edition">Edition v3.5</a>
       </nav>
     </header>
 
-    <!-- Hero -->
-    <section class="hero" id="home">
-      <h1>Chào mừng đến với Website của <span class="gradient">Kiệt Trần</span></h1>
-      <p class="sub">Thiết kế hiện đại, sang trọng với hiệu ứng mượt mà.</p>
-      <a class="btn" href="#features">Khám phá thêm</a>
-    </section>
+    <main>
+      <section class="hero" id="home">
+        <h1><span id="typing-text"></span><span class="typing-cursor"></span></h1>
+        <p class="sub">Thiết kế hiện đại, sang trọng với hiệu ứng mượt mà.</p>
+        <a class="btn" href="#features">Khám phá thêm</a>
+      </section>
 
-    <!-- Features -->
-    <section id="features" class="section">
-      <h2>✨ Tính năng nổi bật</h2>
-      <p class="muted">Website mang đến trải nghiệm sang trọng với hiệu ứng hiện đại, phong cách chuyên nghiệp.</p>
-    </section>
+      <section id="features" class="section">
+        <h2>✨ Tính năng nổi bật</h2>
+        <p class="muted">Website mang đến trải nghiệm sang trọng với hiệu ứng hiện đại, phong cách chuyên nghiệp.</p>
+      </section>
 
-    <!-- Projects -->
-    <section id="projects" class="section">
-      <h2>🚀 Dự án nổi bật</h2>
-      <div class="project-grid">
-        <article class="project-card">
-          <div class="proj-icon">🌐</div>
-          <h3>IOE</h3>
-          <p class="proj-desc">Làm các vòng IOE với giá siêu hời cho bạn — hỗ trợ luyện tập, chia đề và thống kê tiến độ.</p>
-        </article>
+      <section id="projects" class="section">
+        <h2>🚀 Dự án nổi bật</h2>
+        <div class="project-grid">
+          <article class="project-card">
+            <div class="proj-icon">🌐</div>
+            <h3>IOE</h3>
+            <p class="proj-desc">Làm các vòng IOE với giá siêu hời cho bạn — hỗ trợ luyện tập, chia đề và thống kê tiến độ.</p>
+          </article>
+          <article class="project-card">
+            <div class="proj-icon">⚡</div>
+            <h3>Ứng dụng nhỏ</h3>
+            <p class="proj-desc">App mini viết bằng JavaScript, dễ triển khai — utility nhỏ, giao diện trực quan, responsive.</p>
+          </article>
+          <article class="project-card">
+            <div class="proj-icon">🤖</div>
+            <h3>AI Bot</h3>
+            <p class="proj-desc">Chatbot demo kết nối AI, trả lời tự nhiên, có thể tích hợp API để phục vụ chat và trợ giúp.</p>
+          </article>
+        </div>
+      </section>
 
-        <article class="project-card">
-          <div class="proj-icon">⚡</div>
-          <h3>Ứng dụng nhỏ</h3>
-          <p class="proj-desc">App mini viết bằng JavaScript, dễ triển khai — utility nhỏ, giao diện trực quan, responsive.</p>
-        </article>
+      <section id="download" class="section">
+        <h2>📥 Tải xuống bản demo IOE Auto 1</h2>
+        <p class="muted">Tải demo để tham khảo.</p>
+        <a class="btn" href="https://download1587.mediafire.com/lazhgg6grevgIRojUlQn6lPS7MAA356xYKb1FTA3FtYcjxldAHpLl_knMlfJA3dKDZ82Ec6u7CZEnrIIg8AmVYrcEdbGJFRvV2VKQh_7tjyxhIG92Q-YowNsl9cDgIYKuFWGSqM0wLgiljsU4_hvi_4EzM7y3eSfbKo1ygn_8hqwNpE/nz7dcirbtofs8jr/IOEAuto1.Release.rar">Download demo</a>
+      </section>
 
-        <article class="project-card">
-          <div class="proj-icon">🤖</div>
-          <h3>AI Bot</h3>
-          <p class="proj-desc">Chatbot demo kết nối AI, trả lời tự nhiên, có thể tích hợp API để phục vụ chat và trợ giúp.</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- Download -->
-    <section id="download" class="section">
-      <h2>📥 Tải xuống bản demo IOE Auto 1</h2>
-      <p class="muted">Tải demo để tham khảo.</p>
-      <a class="btn" href="https://download1587.mediafire.com/lazhgg6grevgIRojUlQn6lPS7MAA356xYKb1FTA3FtYcjxldAHpLl_knMlfJA3dKDZ82Ec6u7CZEnrIIg8AmVYrcEdbGJFRvV2VKQh_7tjyxhIG92Q-YowNsl9cDgIYKuFWGSqM0wLgiljsU4_hvi_4EzM7y3eSfbKo1ygn_8hqwNpE/nz7dcirbtofs8jr/IOEAuto1.Release.rar">Download demo</a>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact" class="section contact">
-      <h2>📩 Liên hệ</h2>
-      <p class="muted">Click vào nút để liên hệ qua Facebook</p>
-      <div class="link-box">
-        <a href="https://www.facebook.com/profile.php?id=61555064526249" target="_blank" rel="noopener noreferrer">
-          <span id="facebook-link">Kiệt Trần - Facebook</span>
-        </a>
-      </div>
-    </section>
+      <section id="contact" class="section">
+        <h2>📩 Liên hệ</h2>
+        <p class="muted">Click vào nút để liên hệ qua Facebook</p>
+        <div class="link-box">
+          <a href="https://www.facebook.com/profile.php?id=61555064526249" target="_blank" rel="noopener noreferrer">
+            <span id="facebook-link">Kiệt Trần - Facebook</span>
+          </a>
+        </div>
+      </section>
+    </main>
 
     <footer>
       <p>© 2025 Kiệt Trần — All rights reserved.</p>
     </footer>
   </div>
 
-  <!-- Particles lib (CDN) -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <script>
     // Initialize particles.js
     particlesJS('particles-js', {
-      "particles": {
-        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
-        "color": { "value": "#ffffff" },
-        "shape": {
-          "type": "circle", "stroke": { "width": 0, "color": "#000000" },
-          "polygon": { "nb_sides": 5 },
-          "image": { "src": "img/github.svg", "width": 100, "height": 100 }
-        },
-        "opacity": {
-          "value": 0.5, "random": false, "anim": { "enable": false, "speed": 1, "opacity_min": 0.1, "sync": false }
-        },
-        "size": {
-          "value": 3, "random": true, "anim": { "enable": false, "speed": 40, "size_min": 0.1, "sync": false }
-        },
-        "line_linked": {
-          "enable": true, "distance": 150, "color": "#ffffff",
-          "opacity": 0.4, "width": 1
-        },
-        "move": {
-          "enable": true, "speed": 6, "direction": "none", "random": false, "straight": false,
-          "out_mode": "out", "bounce": false,
-          "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 }
-        }
-      },
-      "interactivity": {
-        "detect_on": "canvas", "events": {
-          "onhover": { "enable": true, "mode": "grab" },
-          "onclick": { "enable": true, "mode": "push" },
-          "resize": true
-        },
-        "modes": {
-          "grab": { "distance": 140, "line_linked": { "opacity": 1 } },
-          "bubble": { "distance": 400, "size": 40, "duration": 2, "opacity": 8, "speed": 3 },
-          "repulse": { "distance": 200, "duration": 0.4 },
-          "push": { "particles_nb": 4 },
-          "remove": { "particles_nb": 2 }
-        }
-      },
-      "retina_detect": true
+      "particles":{"number":{"value":60,"density":{"enable":true,"value_area":800}},"color":{"value":"#ffffff"},"shape":{"type":"circle"},"opacity":{"value":0.4,"random":false},"size":{"value":3,"random":true},"line_linked":{"enable":true,"distance":150,"color":"#ffffff","opacity":0.2,"width":1},"move":{"enable":true,"speed":2,"direction":"none","random":false,"straight":false,"out_mode":"out","bounce":false}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":true,"mode":"grab"},"onclick":{"enable":true,"mode":"push"},"resize":true},"modes":{"grab":{"distance":140,"line_linked":{"opacity":0.5}},"push":{"particles_nb":4}}},"retina_detect":true
     });
 
-    // Intersection Observer for project cards
-    const observer = new IntersectionObserver((entries, observer) => {
+    // Custom Cursor
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+    
+    window.addEventListener('mousemove', (e) => {
+        const { clientX: posX, clientY: posY } = e;
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
+        cursorOutline.animate({
+            left: `${posX}px`,
+            top: `${posY}px`
+        }, { duration: 500, fill: "forwards" });
+    });
+
+    const interactiveElements = document.querySelectorAll('a, .btn, .menu-toggle, .project-card, .link-box');
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseover', () => {
+            cursorOutline.style.width = '60px';
+            cursorOutline.style.height = '60px';
+            cursorOutline.style.backgroundColor = 'var(--accent3)';
+            cursorOutline.style.borderColor = 'transparent';
+        });
+        el.addEventListener('mouseleave', () => {
+            cursorOutline.style.width = '40px';
+            cursorOutline.style.height = '40px';
+            cursorOutline.style.backgroundColor = 'transparent';
+            cursorOutline.style.borderColor = 'var(--accent3)';
+        });
+    });
+
+    // Typing Effect
+    const typingTextElement = document.getElementById('typing-text');
+    const textToType = "Chào mừng đến với Website của Kiệt Trần";
+    let charIndex = 0;
+
+    function type() {
+      if (charIndex < textToType.length) {
+        if (textToType.substring(charIndex, charIndex + 9) === "Kiệt Trần") {
+            typingTextElement.innerHTML += '<span class="gradient">Kiệt Trần</span>';
+            charIndex += 9;
+        } else {
+            typingTextElement.textContent += textToType.charAt(charIndex);
+            charIndex++;
+        }
+        setTimeout(type, 80);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', type);
+
+    // Glow Effect for Project Cards
+    document.querySelectorAll('.project-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+
+    // Active Nav Link on Scroll
+    const sections = document.querySelectorAll('.section');
+    const navLinks = document.querySelectorAll('.nav a');
+
+    const sectionObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }, { rootMargin: '0px', threshold: 0.4 });
+    sections.forEach(section => { sectionObserver.observe(section); });
+
+    // Intersection Observer for project cards fade-in
+    const cardObserver = new IntersectionObserver((entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('show');
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.2 });
-
-    document.querySelectorAll('.project-card').forEach(card => {
-      observer.observe(card);
-    });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.project-card').forEach(card => { cardObserver.observe(card); });
 
     // Mobile menu toggle logic
     const menuToggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('.nav');
-
     menuToggle.addEventListener('click', () => {
       nav.classList.toggle('nav-open');
       menuToggle.classList.toggle('active');
     });
   </script>
+
 </body>
 </html>
